@@ -41,10 +41,10 @@ def load_pytorch_model():
 
 model = load_pytorch_model()
 
-st.title("Malware Binary Image Classifier")
-st.write("Upload a malware binary visualization image to check if it is benign or malicious.")
+st.title("Malware/Benign Binary Image Classifier")
+st.write("Received a fishy email? Suspect a PDF to be malicious? Change the format to a malware binary visualization image. Then upload it here to check if it is benign or malicious.")
 
-uploaded_file = st.file_uploader("Choose a PNG or JPG image...", type=["png", "jpg", "jpeg"])
+uploaded_file = st.file_uploader("Choose a PNG, JPEG, or JPG image...", type=["png", "jpg", "jpeg"])
 
 if uploaded_file is not None:
     # Open the image directly in its native upload state
@@ -52,7 +52,7 @@ if uploaded_file is not None:
     st.image(image, caption='Uploaded Binary Image.', use_container_width=True)
     st.write("Processing and classifying...")
 
-    # Mirror your EXACT training transforms without any extra conversions
+    # Mirror exact training transforms without any extra conversions
     transform = transforms.Compose([
         transforms.Grayscale(num_output_channels=1),
         transforms.Resize((64, 64)),
@@ -60,17 +60,17 @@ if uploaded_file is not None:
     ])
     
     img_tensor = transform(image)
-    img_tensor = img_tensor.unsqueeze(0) # Add batch dimension
+    img_tensor = img_tensor.unsqueeze(0)
 
     with torch.no_grad():
         outputs = model(img_tensor)
-        probabilities = torch.nn.functional.softmax(outputs, dim=1)
+        probabilities = torch.nn.functional.softmax(outputs, dim = 1)
         _, predicted_class = torch.max(outputs, 1)
         
     class_idx = predicted_class.item()
     confidence = probabilities[0][class_idx].item() * 100
 
-    # Retained your confirmed dataset order: 0 = Benign, 1 = Malware
+    # Retain the correct classes
     labels = {0: "Benign", 1: "Malware"} 
     result_label = labels[class_idx]
 
