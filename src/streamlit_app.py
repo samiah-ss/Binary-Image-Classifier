@@ -3,7 +3,7 @@ import torch
 import torch.nn as nn
 from PIL import Image
 import torchvision.transforms as transforms
-import os  # Added to safely track path locations across the server
+import os
 
 class CNN(nn.Module):
     def __init__(self):
@@ -21,26 +21,18 @@ class CNN(nn.Module):
             self.fc = nn.Linear(x.size(1), 2).to(x.device)
         return self.fc(x)
 
-# Use a modified loading function to handle the dynamic fc layer safely
 @st.cache_resource
 def load_pytorch_model():
-    # Automatically finds the folder where this specific script lives inside the container
     current_dir = os.path.dirname(os.path.abspath(__file__))
     model_path = os.path.join(current_dir, 'benign_model.pth')
     
-    # Load the raw state weights dict using the bulletproof path
     state_dict = torch.load(model_path, map_location=torch.device('cpu'))
-    
     net = CNN()
     
-    # Extract the dynamic fc dimensions straight from the saved weights file
     fc_weight_shape = state_dict['fc.weight'].shape
-    in_features = fc_weight_shape[1]                # 8192
+    in_features = fc_weight_shape[1]                
     
-    # Manually initialize fc so load_state_dict doesn't throw a key error
     net.fc = nn.Linear(in_features, 2)
-    
-    # Load the weights into the structure cleanly
     net.load_state_dict(state_dict)
     net.eval()
     return net
@@ -53,19 +45,22 @@ st.write("Received a fishy email? Suspect a PDF to be malicious? Change the form
 uploaded_file = st.file_uploader("Choose a PNG or JPG image...", type=["png", "jpg", "jpeg"])
 
 if uploaded_file is not None:
-    image = Image.open(uploaded_file)
-    st.image(image, caption='Uploaded Binary Image.', use_container_width=True)
+    raw_image = Image.open(uploaded_file)
+    st.image(raw_image, caption='Uploaded Binary Image.', use_container_width=True)
     st.write("Processing and classifying...")
 
-    # MATCHED TO YOUR NOTEBOOK PIPELINE + FORCED SHARP PIXELS
+    # 1. FORCE THE IMAGE TO CONVERT TO RGB FIRST
+    # This strips away web transparency channels that corrupt the grayscale math!
+    clean_image = raw_image.convert("RGB")
+
+    # 2. RUN YOUR EXACT NOTEBOOK TRANSFORMS ON CLEAN DATA
     transform = transforms.Compose([
         transforms.Grayscale(num_output_channels=1),
         transforms.Resize((64, 64), interpolation=transforms.InterpolationMode.NEAREST), 
         transforms.ToTensor(),
     ])
     
-    # Sent raw image directly into the corrected pipeline
-    img_tensor = transform(image)
+    img_tensor = transform(clean_image)
     img_tensor = img_tensor.unsqueeze(0)
 
     with torch.no_grad():
