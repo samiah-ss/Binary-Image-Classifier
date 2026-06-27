@@ -3,6 +3,7 @@ import torch
 import torch.nn as nn
 from PIL import Image
 import torchvision.transforms as transforms
+import os  # Added to safely track path locations across the server
 
 class CNN(nn.Module):
     def __init__(self):
@@ -23,8 +24,12 @@ class CNN(nn.Module):
 # Use a modified loading function to handle the dynamic fc layer safely
 @st.cache_resource
 def load_pytorch_model():
-    # Load the raw state weights dict
-    state_dict = torch.load('benign_model.pth', map_location=torch.device('cpu'))
+    # Automatically finds the folder where this specific script lives inside the container
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    model_path = os.path.join(current_dir, 'benign_model.pth')
+    
+    # Load the raw state weights dict using the bulletproof path
+    state_dict = torch.load(model_path, map_location=torch.device('cpu'))
     
     net = CNN()
     
