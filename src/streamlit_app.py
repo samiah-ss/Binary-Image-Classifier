@@ -29,39 +29,38 @@ def load_pytorch_model():
     state_dict = torch.load(model_path, map_location=torch.device('cpu'))
     net = CNN()
     
-    fc_weight_shape = state_dict['fc.weight'].shape
-    in_features = fc_weight_shape[1]                
-    
-    net.fc = nn.Linear(in_features, 2)
-    net.load_state_dict(state_dict)
+    # Safely match your dynamic layer keys from Colab
+    # Checks if your model saved it as 'fc.weight' or left it unmapped
+    if 'fc.weight' in state_dict:
+        in_features = state_dict['fc.weight'].shape[1]
+        net.fc = nn.Linear(in_features, 2)
+        
+    net.load_state_dict(state_dict, strict=False)
     net.eval()
     return net
 
 model = load_pytorch_model()
 
 st.title("Malware Binary Image Classifier")
-st.write("Received a fishy email? Suspect a PDF to be malicious? Change the format to a malware binary visualization image. Then upload it here to check if it is benign or malicious.")
+st.write("Upload a malware binary visualization image to check if it is benign or malicious.")
 
 uploaded_file = st.file_uploader("Choose a PNG or JPG image...", type=["png", "jpg", "jpeg"])
 
 if uploaded_file is not None:
-    raw_image = Image.open(uploaded_file)
-    st.image(raw_image, caption='Uploaded Binary Image.', use_container_width=True)
+    # Open the image directly in its native upload state
+    image = Image.open(uploaded_file)
+    st.image(image, caption='Uploaded Binary Image.', use_container_width=True)
     st.write("Processing and classifying...")
 
-    # 1. FORCE THE IMAGE TO CONVERT TO RGB FIRST
-    # This strips away web transparency channels that corrupt the grayscale math!
-    clean_image = raw_image.convert("RGB")
-
-    # 2. RUN YOUR EXACT NOTEBOOK TRANSFORMS ON CLEAN DATA
+    # Mirror your EXACT training transforms without any extra conversions
     transform = transforms.Compose([
         transforms.Grayscale(num_output_channels=1),
-        transforms.Resize((64, 64), interpolation=transforms.InterpolationMode.NEAREST), 
-        transforms.ToTensor(),
+        transforms.Resize((64, 64)),
+        transforms.ToTensor()
     ])
     
-    img_tensor = transform(clean_image)
-    img_tensor = img_tensor.unsqueeze(0)
+    img_tensor = transform(image)
+    img_tensor = img_tensor.unsqueeze(0) # Add batch dimension
 
     with torch.no_grad():
         outputs = model(img_tensor)
@@ -71,12 +70,11 @@ if uploaded_file is not None:
     class_idx = predicted_class.item()
     confidence = probabilities[0][class_idx].item() * 100
 
+    # Retained your confirmed dataset order: 0 = Benign, 1 = Malware
     labels = {0: "Benign", 1: "Malware"} 
     result_label = labels[class_idx]
 
     if result_label == "Malware":
         st.error(f"**Malware Detected!** (Confidence: {confidence:.2f}%)")
-        st.write("Have more images? You can scroll back up to upload them!")
     else:
         st.success(f"**Seems Safe!** (Confidence: {confidence:.2f}%)")
-        st.write("Have more images? You can scroll back up to upload them!")
