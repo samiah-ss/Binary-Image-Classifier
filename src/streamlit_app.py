@@ -78,3 +78,5 @@ if uploaded_file is not None:
         st.error(f"**Malware Detected!** (Confidence: {confidence:.2f}%)")
     else:
         st.success(f"**Seems Safe!** (Confidence: {confidence:.2f}%)")
+
+st.write("Made by Samiah Siddiqua")
