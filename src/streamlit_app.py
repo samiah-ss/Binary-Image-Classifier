@@ -1,4 +1,8 @@
 import streamlit as st
+
+st.set_option("server.enableXsrfProtection", False)
+st.set_option("server.enableCORS", False)
+
 import torch
 import torch.nn as nn
 from PIL import Image
