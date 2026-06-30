@@ -88,7 +88,7 @@ if uploaded_file is not None:
         st.warning(
             f"**Suspicious Anomalies Detected**\n\n"
             f"The model leans toward **{result_label}**, but detected conflicting structural "
-            f"signals. This overlap is standard when analyzing files that employ evasion tactics."
+            f"signals. This overlap is standard when analyzing files that employ evasion tactics. "
             f"Treat this file as a risk until verified."
         )
     else:
@@ -98,3 +98,7 @@ if uploaded_file is not None:
             st.success(f"🟢 **Seems Safe!** (Certainty: {confidence:.2f}%)")
 
 st.write("Made by Samiah Siddiqua")
+st.write(
+    "_The core model was presented alongside Jihyun Jeong, Polly Pao, and Jahnavi Gupta "
+    "for Cyber-AI Camp's 2026 Cyber-AI Hackathon, where it won 3rd place._"
+)
