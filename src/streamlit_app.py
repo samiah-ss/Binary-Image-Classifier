@@ -66,7 +66,7 @@ if uploaded_file is not None:
         outputs = model(img_tensor)
         probabilities = torch.nn.functional.softmax(outputs, dim = 1)
         _, predicted_class = torch.max(outputs, 1)
-        
+    
     class_idx = predicted_class.item()
     confidence = probabilities[0][class_idx].item() * 100
 
@@ -74,9 +74,27 @@ if uploaded_file is not None:
     labels = {0: "Benign", 1: "Malware"} 
     result_label = labels[class_idx]
 
-    if result_label == "Malware":
-        st.error(f"**Malware Detected!** (Confidence: {confidence:.2f}%)")
+    HIGH_CONFIDENCE_THRESHOLD = 80.0
+    LOW_CONFIDENCE_THRESHOLD = 60.0
+
+    if confidence < LOW_CONFIDENCE_THRESHOLD:
+        st.warning(
+            "**Potential Obfuscation Detected**\n\n"
+            "Our system flagged this file because its structures are highly scrambled. "
+            "Modern malware deliberately mimics benign files to dodge detection algorithms. "
+            "Treat this file as a high risk until verified."
+        )
+    elif confidence < HIGH_CONFIDENCE_THRESHOLD:
+        st.warning(
+            f"**Suspicious Anomalies Detected**\n\n"
+            f"The model leans toward **{result_label}**, but detected conflicting structural "
+            f"signals. This overlap is standard when analyzing files that employ evasion tactics."
+            f"Treat this file as a risk until verified."
+        )
     else:
-        st.success(f"**Seems Safe!** (Confidence: {confidence:.2f}%)")
+        if result_label == "Malware":
+            st.error(f"🔴 **Malware Detected!** (Certainty: {confidence:.2f}%)")
+        else:
+            st.success(f"🟢 **Seems Safe!** (Certainty: {confidence:.2f}%)")
 
 st.write("Made by Samiah Siddiqua")
