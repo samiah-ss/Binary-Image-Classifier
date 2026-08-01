@@ -3,7 +3,7 @@
 ## This model detects whether or not binary images are malware.
 
 Received a fishy email? Suspect a PDF to be malicious? 
-Change the format to a malware binary visualization image. 
+Convert your file to a malware binary visualization image. 
 Then upload it here to check if it is benign or malicious.
 
 Made by Samiah Siddiqua
