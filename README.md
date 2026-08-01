@@ -1,19 +1,11 @@
----
-title: Binary Image Classifier
-emoji: 🚀
-colorFrom: red
-colorTo: red
-sdk: docker
-app_port: 8501
-tags:
-- streamlit
-pinned: false
-short_description: This model detects whether or not binary images are malware.
----
+# **Binary Image Classifier**
 
-# Welcome to Streamlit!
+## This model detects whether or not binary images are malware.
 
-Edit `/src/streamlit_app.py` to customize this app to your heart's desire. :heart:
+Received a fishy email? Suspect a PDF to be malicious? 
+Change the format to a malware binary visualization image. 
+Then upload it here to check if it is benign or malicious.
 
-If you have any questions, checkout our [documentation](https://docs.streamlit.io) and [community
-forums](https://discuss.streamlit.io).
+Made by Samiah Siddiqua
+
+The core model was presented alongside Jihyun Jeong, Polly Pao, and Jahnavi Gupta for Cyber-AI Camp's 2026 Cyber-AI Hackathon, where it won 3rd place.
