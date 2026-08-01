@@ -1,5 +1,5 @@
 ---
-title: Malware Binary Classifier
+title: Binary Image Classifier
 emoji: 🚀
 colorFrom: red
 colorTo: red
@@ -9,7 +9,6 @@ tags:
 - streamlit
 pinned: false
 short_description: This model detects whether or not binary images are malware.
-license: mit
 ---
 
 # Welcome to Streamlit!
