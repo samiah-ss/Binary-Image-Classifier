@@ -4,7 +4,7 @@
 
 Received a fishy email? Suspect a PDF to be malicious? 
 Convert your file to a malware binary visualization image. 
-Then upload it here to check if it is benign or malicious.
+Then upload it to the Binary Image Classifier to check if it is benign or malicious.
 
 Made by Samiah Siddiqua
 
