@@ -41,7 +41,7 @@ def load_pytorch_model():
 
 model = load_pytorch_model()
 
-st.title("Malware/Benign Binary Image Classifier")
+st.title("Binary Image Classifier")
 st.write("Received a fishy email? Suspect a PDF to be malicious? Change the format to a malware binary visualization image. Then upload it here to check if it is benign or malicious.")
 
 uploaded_file = st.file_uploader("Choose a PNG, JPEG, or JPG image...", type=["png", "jpg", "jpeg"])
