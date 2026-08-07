@@ -99,6 +99,6 @@ if uploaded_file is not None:
 
 st.write("Made by Samiah Siddiqua")
 st.write(
-    "_The core model was presented alongside Jihyun Jeong, Polly Pao, and Jahnavi Gupta "
+    "_The core model was presented by Samiah Siddiqua alongside Jihyun Jeong, Polly Pao, and Jahnavi Gupta "
     "for Cyber-AI Camp's 2026 Cyber-AI Hackathon, where it won 3rd place._"
 )
